@@ -20,16 +20,17 @@ def postprocess_output(fahrenheit):
 @csrf_exempt
 @api_view(['POST'])
 def predict_temperature(request):
-    # cargamos el modelo entrenado
-    #model = load_model()
-    # obtenemos la temperatura en Celsius del cuerpo de la solicitud
-    # celsius = float(request.POST['celsius'])
-    # preprocesamos la entrada
-    #input_data = preprocess_input(celsius)
-    # realizamos la predicción
-    #fahrenheit = model.predict(input_data)
-    # postprocesamos la salida
-    #output_data = postprocess_output(fahrenheit)
-    # creamos una respuesta JSON con el resultado
-    response_data = {'fahrenheit': 3}
-    return JsonResponse(response_data)
+    model = load_model()
+    celsius = request.data.get('celsius')
+  # Utiliza request.POST.get() en lugar de request.POST[]
+    
+    if celsius is not None:
+        celsius = float(celsius)
+        input_data = preprocess_input(celsius)
+        fahrenheit = model.predict(input_data)
+        output_data = postprocess_output(fahrenheit)
+        response_data = {'fahrenheit': output_data}  # Utiliza la salida procesada en lugar de un valor fijo
+        return JsonResponse(response_data)
+    else:
+        error_data = {'error': 'No se proporcionó la temperatura en Celsius'}
+        return JsonResponse(error_data, status=400)

@@ -39,7 +39,7 @@ class CelsiusView:
     def get_celsius(self):
         return float(input("Ingrese temperatura en Celsius: "))
 
-    def show_fahrenheit(self, ahrenheit):
+    def show_fahrenheit(self, fahrenheit):
         print("El resultado es " + str(fahrenheit) + " Fahrenheit!")
 
 #Se juntan la comunicacion entre modelo y vista#

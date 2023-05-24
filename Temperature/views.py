@@ -18,19 +18,42 @@ def postprocess_output(fahrenheit):
     return str(fahrenheit[0][0])
 # vista para realizar predicciones
 @csrf_exempt
-@api_view(['POST'])
-def predict_temperature(request):
-    model = load_model()
-    celsius = request.data.get('celsius')
-  # Utiliza request.POST.get() en lugar de request.POST[]
+# @api_view(['POST'])
+# def predict_temperature(request):
+#     model = load_model()
+#     celsius = request.data.get('celsius')
     
-    if celsius is not None:
-        celsius = float(celsius)
-        input_data = preprocess_input(celsius)
-        fahrenheit = model.predict(input_data)
-        output_data = postprocess_output(fahrenheit)
-        response_data = {'fahrenheit': output_data}  # Utiliza la salida procesada en lugar de un valor fijo
-        return JsonResponse(response_data)
+
+#   # Utiliza request.POST.get() en lugar de request.POST[]
+    
+#     if celsius is not None:
+#         celsius = float(celsius)
+#         input_data = preprocess_input(celsius)
+#         fahrenheit = model.predict(input_data)
+#         output_data = postprocess_output(fahrenheit)
+#         response_data = {'fahrenheit': output_data}  # Utiliza la salida procesada en lugar de un valor fijo
+#         return JsonResponse(response_data)
+#     else:
+#         error_data = {'error': 'No se proporcionó la temperatura en Celsius'}
+#         return JsonResponse(error_data, status=400)
+@api_view(['POST', 'GET'])
+def predict_temperature(request):
+    if request.method == 'POST':
+        model = load_model()
+        celsius = request.data.get('celsius')
+        if celsius is not None:
+            celsius = float(celsius)
+            input_data = preprocess_input(celsius)
+            fahrenheit = model.predict(input_data)
+            output_data = postprocess_output(fahrenheit)
+            response_data = {'fahrenheit': output_data}
+            return JsonResponse(response_data)
+        else:
+            error_data = {'error': 'No se proporcionó la temperatura en Celsius'}
+            return JsonResponse(error_data, status=400)
+    elif request.method == 'GET':
+        # Lógica para manejar solicitudes GET
+        # Puedes devolver una respuesta vacía o algún otro tipo de información según sea necesario
+        return JsonResponse({}, status=200)
     else:
-        error_data = {'error': 'No se proporcionó la temperatura en Celsius'}
-        return JsonResponse(error_data, status=400)
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
